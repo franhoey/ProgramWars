@@ -21,8 +21,8 @@ namespace ProgramWars.Server.Control
             GameId = Guid.NewGuid();
             _game = game;
 
-            player1Pipeline.Actions.Subscribe(ReceiveAction);
-            player2Pipeline.Actions.Subscribe(ReceiveAction);
+            player1Pipeline.Actions.Subscribe(action => ReceiveAction(_game.Player1.PlayerId, action));
+            player2Pipeline.Actions.Subscribe(action => ReceiveAction(_game.Player2.PlayerId, action));
 
             _playerPipelines = new Dictionary<Guid, PlayerPipeline>()
             {
@@ -37,9 +37,9 @@ namespace ProgramWars.Server.Control
             SendTurnNotification();
         }
 
-        private void ReceiveAction(GameAction action)
+        private void ReceiveAction(Guid playerId, GameAction action)
         {
-            _game.TakeTurn(action);
+            _game.TakeTurn(playerId, action);
             if (!_game.GameIsEnded)
                 SendTurnNotification();
             else
@@ -71,7 +71,7 @@ namespace ProgramWars.Server.Control
                 GameId = GameId,
                 PlayerId = self.PlayerId,
                 CurrentStatus = self.Set,
-                OppenentActiveCount = opponent.Set.Count(b => b = true)
+                OppenentActiveCount = opponent.Set.Count(b => b == true)
             };
         }
     }

@@ -27,7 +27,7 @@ namespace ProgramWars.Server.Tests.Game
             var game = new Server.Game.Game(playerFactory.Object, turnFactory.Object, setSize);
 
             Assert.Throws<InvalidOperationException>(
-                () => game.TakeTurn(new GameAction() { GameId = player1.PlayerId, Action = ActionType.Attack, Position = 1}),
+                () => game.TakeTurn(player1.PlayerId, new GameAction() { Action = ActionType.Attack, Position = 1}),
                 "Game must be started before a turn can be taken");
         }
 
@@ -51,7 +51,7 @@ namespace ProgramWars.Server.Tests.Game
             var opponent = (game.CurrentPlayer.PlayerId == player1.PlayerId) ? player2 : player1;
 
             Assert.Throws<InvalidOperationException>(
-                () => game.TakeTurn(new GameAction() {PlayerId = opponent.PlayerId, Action = ActionType.Attack, Position = 1}),
+                () => game.TakeTurn(opponent.PlayerId, new GameAction() { Action = ActionType.Attack, Position = 1}),
                 "It is not the turn of player with id {0}",
                 opponent.PlayerId);
         }
@@ -80,7 +80,7 @@ namespace ProgramWars.Server.Tests.Game
             var currentPlayer = (game.CurrentPlayer.PlayerId == player1.PlayerId) ? player1 : player2;
             var opponent = (game.CurrentPlayer.PlayerId == player1.PlayerId) ? player2 : player1;
 
-            game.TakeTurn(new GameAction() {PlayerId = currentPlayer.PlayerId, Action = ActionType.Attack, Position = 1});
+            game.TakeTurn(currentPlayer.PlayerId, new GameAction() { Action = ActionType.Attack, Position = 1});
             
             turnFactory.Verify(m => m.GetTurn(currentPlayer, opponent), Times.Once);
             turnMock.Verify(m => m.Action(ActionType.Attack, 1), Times.Once);
@@ -110,7 +110,7 @@ namespace ProgramWars.Server.Tests.Game
             var currentPlayer = (game.CurrentPlayer.PlayerId == player1.PlayerId) ? player1 : player2;
             var opponent = (game.CurrentPlayer.PlayerId == player1.PlayerId) ? player2 : player1;
 
-            game.TakeTurn(new GameAction() {PlayerId = currentPlayer.PlayerId, Action = ActionType.Attack, Position = 1});
+            game.TakeTurn(currentPlayer.PlayerId, new GameAction() { Action = ActionType.Attack, Position = 1});
 
             Assert.AreEqual(opponent.PlayerId, game.CurrentPlayer.PlayerId);
         }

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramWars.Server", "Progr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramWars.Server.Tests", "ProgramWars.Server.Tests\ProgramWars.Server.Tests.csproj", "{310C815F-1FA9-4C27-83B0-9E12192055B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgramWars.Server.TestRunner", "ProgramWars.Server.TestRunner\ProgramWars.Server.TestRunner.csproj", "{A0D55ED5-51DB-4278-87E9-69BAF50EBAA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{310C815F-1FA9-4C27-83B0-9E12192055B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{310C815F-1FA9-4C27-83B0-9E12192055B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{310C815F-1FA9-4C27-83B0-9E12192055B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0D55ED5-51DB-4278-87E9-69BAF50EBAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0D55ED5-51DB-4278-87E9-69BAF50EBAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0D55ED5-51DB-4278-87E9-69BAF50EBAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0D55ED5-51DB-4278-87E9-69BAF50EBAA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

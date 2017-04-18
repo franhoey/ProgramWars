@@ -14,7 +14,7 @@ namespace ProgramWars.Server.Game
         IPlayerStatus Winner { get; }
         bool GameIsEnded { get; }
         void StartGame();
-        void TakeTurn(GameAction action);
+        void TakeTurn(Guid playerId, GameAction action);
     }
 
     public class Game : IGame
@@ -73,7 +73,7 @@ namespace ProgramWars.Server.Game
         {
             var rnd = new Random();
 
-            if (rnd.Next(1, 2) == 1)
+            if (rnd.Next(1, 3) == 1)
             {
                 CurrentPlayer = _player1;
                 CurrentOpponent = _player2;
@@ -85,7 +85,7 @@ namespace ProgramWars.Server.Game
             }
         }
 
-        public void TakeTurn(GameAction action)
+        public void TakeTurn(Guid playerId, GameAction action)
         {
             if(GameIsEnded)
                 throw new InvalidOperationException("Game has ended");
@@ -93,10 +93,10 @@ namespace ProgramWars.Server.Game
             if(CurrentPlayer == null)
                 throw new InvalidOperationException("Game must be started before a turn can be taken");
 
-            if(CurrentPlayer.PlayerId != action.PlayerId)
-                throw new InvalidOperationException($"It is not the turn of player with id {action.PlayerId}");
+            if(CurrentPlayer.PlayerId != playerId)
+                throw new InvalidOperationException($"It is not the turn of player with id {playerId}");
 
-            var turn = BuildTurn(action.PlayerId);
+            var turn = BuildTurn(playerId);
             turn.Action(action.Action, action.Position);
 
             if(!GameIsEnded)
