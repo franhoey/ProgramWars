@@ -16,14 +16,21 @@ namespace ProgramWars.Server.Tests.Control
 
         public List<Notification> Notifications { get; }
 
+        public bool NotificationsAreCompleted { private set; get; }
+
+        public bool HasActionObservers
+            => _actions.HasObservers;
+
         public PlayerPiplineTestWrapper()
         {
             Notifications = new List<Notification>();
             _notificationErrors = new Subject<Notification>();
             _actions = new Subject<GameAction>();
 
-            _notificationErrors.Subscribe(x => Notifications.Add(x));
-
+            _notificationErrors.Subscribe(
+                x => Notifications.Add(x), 
+                () => NotificationsAreCompleted = true);
+            
             Pipeline = new PlayerPipeline(_actions, _notificationErrors);
         }
 

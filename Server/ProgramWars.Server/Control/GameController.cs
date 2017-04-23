@@ -8,9 +8,17 @@ using ProgramWars.Server.Models;
 
 namespace ProgramWars.Server.Control
 {
-    public class GameController
+    public interface IGameController
+    {
+        Guid GameId { get; }
+        void StartGame();
+    }
+
+    public class GameController : IGameController
     {
         private readonly Dictionary<Guid, PlayerPipeline> _playerPipelines;
+
+        private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 
         private readonly IGame _game;
 
@@ -21,9 +29,14 @@ namespace ProgramWars.Server.Control
             GameId = Guid.NewGuid();
             _game = game;
 
-            player1Pipeline.Actions.Subscribe(action => ReceiveAction(_game.Player1.PlayerId, action));
-            player2Pipeline.Actions.Subscribe(action => ReceiveAction(_game.Player2.PlayerId, action));
+            _subscriptions.Add(
+                player1Pipeline.Actions.Subscribe(action => ReceiveAction(_game.Player1.PlayerId, action))
+                );
 
+            _subscriptions.Add(
+                player2Pipeline.Actions.Subscribe(action => ReceiveAction(_game.Player2.PlayerId, action))
+                );
+            
             _playerPipelines = new Dictionary<Guid, PlayerPipeline>()
             {
                 { _game.Player1.PlayerId, player1Pipeline },
@@ -43,7 +56,10 @@ namespace ProgramWars.Server.Control
             if (!_game.GameIsEnded)
                 SendTurnNotification();
             else
+            {
                 SendEndedNotification();
+                ClosePipelines();
+            }
         }
 
         private void SendEndedNotification()
@@ -55,6 +71,7 @@ namespace ProgramWars.Server.Control
             notification = BuildNotification(_game.CurrentOpponent, _game.CurrentPlayer);
             notification.NotificationType = NotificationType.GameOver;
             _playerPipelines[_game.CurrentOpponent.PlayerId].Notifications.OnNext(notification);
+
         }
 
         private void SendTurnNotification()
@@ -62,6 +79,21 @@ namespace ProgramWars.Server.Control
             var notification = BuildNotification(_game.CurrentPlayer, _game.CurrentOpponent);
             notification.NotificationType = NotificationType.YourTurn;
             _playerPipelines[_game.CurrentPlayer.PlayerId].Notifications.OnNext(notification);
+        }
+
+        private void ClosePipelines()
+        {
+            //remove subscriptions
+            foreach (var subscription in _subscriptions)
+            {
+                subscription.Dispose();
+            }
+
+            //Mark observers as completed
+            foreach (var playerPipeline in _playerPipelines)
+            {
+                playerPipeline.Value.Notifications.OnCompleted();
+            }
         }
 
         private Notification BuildNotification(IPlayerStatus self, IPlayerStatus opponent)

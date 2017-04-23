@@ -124,5 +124,39 @@ namespace ProgramWars.Server.Tests.Control
             Assert.AreEqual(1, opponentPipeline.Notifications.Count);
             Assert.True(opponentPipeline.Notifications.Any(notification => notification.NotificationType == NotificationType.GameOver));
         }
+
+        [Test]
+        public void When_PlayerMoves_IfGameIsEnded_PipelinesAreClosed()
+        {
+            var currentPlayer = new Mock<IPlayer>();
+            currentPlayer.Setup(m => m.PlayerId).Returns(Guid.NewGuid());
+            var opponent = new Mock<IPlayer>();
+            opponent.Setup(m => m.PlayerId).Returns(Guid.NewGuid());
+            var gameMock = new Mock<IGame>();
+            gameMock.Setup(m => m.Player1)
+                .Returns(currentPlayer.Object);
+            gameMock.Setup(m => m.Player2)
+                .Returns(opponent.Object);
+            gameMock.Setup(m => m.CurrentPlayer)
+                .Returns(currentPlayer.Object);
+            gameMock.Setup(m => m.CurrentOpponent)
+                .Returns(opponent.Object);
+            gameMock.Setup(m => m.GameIsEnded)
+                .Returns(true);
+
+            var currentPlayerPipeline = new PlayerPiplineTestWrapper();
+            var opponentPipeline = new PlayerPiplineTestWrapper();
+
+            var controller = new GameController(gameMock.Object, currentPlayerPipeline.Pipeline, opponentPipeline.Pipeline);
+            controller.StartGame();
+
+            currentPlayerPipeline.SendAction(new GameAction());
+            
+            Assert.IsTrue(currentPlayerPipeline.NotificationsAreCompleted);
+            Assert.IsFalse(currentPlayerPipeline.HasActionObservers);
+
+            Assert.IsTrue(opponentPipeline.NotificationsAreCompleted);
+            Assert.IsFalse(opponentPipeline.HasActionObservers);
+        }
     }
 }

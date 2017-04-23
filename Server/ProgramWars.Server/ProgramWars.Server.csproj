@@ -62,7 +62,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Control\Factories\GameControllerFactory.cs" />
+    <Compile Include="Control\Lobby.cs" />
     <Compile Include="Control\PlayerPipeline.cs" />
+    <Compile Include="Game\Factories\GameFactory.cs" />
     <Compile Include="Models\GameAction.cs" />
     <Compile Include="Control\GameController.cs" />
     <Compile Include="Models\ActionType.cs" />
